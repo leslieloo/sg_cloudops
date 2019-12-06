@@ -105,5 +105,19 @@ echo -e "First\nSecond\nThird" | grep -i second  # same as above (-i ignore case
 
 ```
 
+* Functions
+```bash
+    greeting() {                      # declare myfunc function
+        echo "hello $1 $2"
+    }
+
+    function greeting() {             # Same as above
+        echo "hello $1 $2"
+    }
+
+    greeting world                    # call function greeting, pass world as parameter ($1) 
+    greeting world everyone           # call function greeting, pass world ($1) & everyone($2)
+```
+
 
          

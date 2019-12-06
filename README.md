@@ -1,6 +1,5 @@
 # Bertelsmann Challenge Cloud 2019 
 
-*Study Group : sg_cloudops*
 *Edited By : Lesliel (6 Dec 2019)*
 
 
@@ -73,21 +72,40 @@ set a=$(pwd)        # set variable a to pwd output
 echo $a
 ```
 
-* Files
-```bash
-head -3 a.txt       # show 10 lines from a.txt
-tail -3 a.txt       # show 10 lines from a.txt
-```
-
 * Input/Output Redirection
 ```bash
-echo "my first line" >> c.txt    # write content to file c.txt (append to file if exists)
-echo "my first line" > c.txt     # same as above (overwrite if exists)
+echo "Leslie,4,5" > c.txt       # write file to c.txt (overwrite if exists)
+
+echo "Joey,100,2" >> c.txt         # write content to file c.txt (append to file if exists)
+echo "Oscar,300,12" >> c.txt       
+echo "Carmen,200,12" >> c.txt
+
+
+```
+
+* File Manipulation
+```bash
+head -3 c.txt               # show first 10 lines from a.txt
+tail -3 c.txt               # show last 10 lines from a.txt
+
+sort -k 2 -t , c.txt        # sort c.txt (with comma as delimeter) on column 2(-k 2, alphanumeric)
+sort -n -k 2 -t , c.txt     # same as above (treat column 2 as numeric)
+
+cut -d , -f 2 c.txt         # extract second column/field(-f) from c.txt, comma delimeter (-d)
+cut -d , -f 1,3 c.txt       # extract first & third column only
+
+tr -s ',' ';' < c.txt       # read from c.txt, replace command with semicomma
 ```
 
 * Looping
 ```bash
-for i in $(ls .); do echo $i; done      # loop through file listing
+
+for i in $(ls .); do                # loop through file listing (multiline)
+    echo $i; 
+done 
+
+for i in $(ls .); do echo $i; done  # save as bove (one line)
+
 ```
 
 * Combining commands & Pipe
@@ -107,17 +125,69 @@ echo -e "First\nSecond\nThird" | grep -i second  # same as above (-i ignore case
 
 * Functions
 ```bash
-    greeting() {                      # declare myfunc function
-        echo "hello $1 $2"
-    }
+greeting() {                      # declare myfunc function
+    echo "hello $1 $2"
+}
 
-    function greeting() {             # Same as above
-        echo "hello $1 $2"
-    }
+function greeting() {             # Same as above
+    echo "hello $1 $2"
+}
 
-    greeting world                    # call function greeting, pass world as parameter ($1) 
-    greeting world everyone           # call function greeting, pass world ($1) & everyone($2)
+greeting world                    # call function greeting, pass world as parameter ($1) 
+greeting world everyone           # call function greeting, pass world ($1) & everyone($2)
 ```
+
+### 3. Use Case
+* Find running processes, filter by process name
+```bash
+
+# function to summarize running process by name
+# ps            - show running $process
+# tail -n +2    - ignore first line
+# tr -s " "     - search & replace multiple spacing to single spacing
+# cut -d " " -f 9   - extract column 9 from line (process command)
+# sort          - sort data by ascending
+# grep -w       - grep word
+# uniq -c       - count occurence
+# sort -nr      - sort as numeric by descending
+
+
+processCount(){
+    ps | tail -n +2 | tr -s " " | cut -d " " -f 9 | sort > d.txt
+    cat d.txt | grep -w "$1" | uniq -c | sort -nr
+}
+
+processCount sh                 # filter sh process
+
+```
+
+
+### 4. Script File
+Why script file?
+* Reproducible/Reusable
+* Version Control
+* Automation
+
+Put commands into a file, and save with extension .sh (eg. check_process.sh)
+```bash
+#!/bin/bash                 # for windows, use #!/usr/bin/env sh              
+
+processCount(){
+    ps | tail -n +2 | tr -s " " | cut -d " " -f 9 | sort > d.txt
+    cat d.txt | grep -w "$1" | uniq -c | sort -nr
+}
+
+processCount $1
+
+```
+
+Give file permission to execute (in linux)
+```bash
+chmod a+w check_process.sh           # give execute permission
+./check_process.sh bash              # get process count by bash
+
+```
+
 
 
          
